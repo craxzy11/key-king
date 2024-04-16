@@ -4,6 +4,7 @@ import bodyParser from "body-parser"
 import cookieParser from "cookie-parser";
 import { Server } from "socket.io";
 import { createServer } from "http";
+import { errorMiddleware } from "./middleware/error";
 
 dotenv.config({
     path: "./.env",
@@ -15,7 +16,14 @@ const io = new Server(server)
 
 const PORT = process.env.PORT;
 const MONGO_URL = process.env.MONGO_URL;
+const envMode = process.env.NODE_ENV;
+
+app.use(errorMiddleware)
 
 server.listen(PORT, () => {
     console.log(`Server is running on PORT ${PORT}`);
 })
+
+export {
+    envMode
+}
