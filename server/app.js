@@ -2,9 +2,10 @@ import express from "express"
 import dotenv from "dotenv"
 import bodyParser from "body-parser"
 import cookieParser from "cookie-parser";
+import { mongoConnect } from "./utils/config.js";
 import { Server } from "socket.io";
 import { createServer } from "http";
-import { errorMiddleware } from "./middleware/error";
+import { errorMiddleware } from "./middleware/error.js";
 
 dotenv.config({
     path: "./.env",
@@ -17,6 +18,8 @@ const io = new Server(server)
 const PORT = process.env.PORT;
 const MONGO_URL = process.env.MONGO_URL;
 const envMode = process.env.NODE_ENV;
+
+mongoConnect(MONGO_URL);
 
 app.use(errorMiddleware)
 
