@@ -1,5 +1,5 @@
 import mongoose from "mongoose"
-import { isUserUnique, isValidEmailFormat } from "../utills/validator.js";
+import { isUserUnique, isValidEmailFormat } from "../utils/validator.js";
 
 const Schema = mongoose.Schema;
 
