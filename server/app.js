@@ -21,16 +21,24 @@ const MONGO_URL = process.env.MONGO_URL;
 const envMode = process.env.NODE_ENV;
 
 app.use(express.json());
-app.use("/api/v1/auth", AUTH_ROUTES);
+app.use(cookieParser());
+app.use(express.urlencoded({extended: false}))
 
-mongoConnect(MONGO_URL);
+app.use("/api/v1/auth", AUTH_ROUTES);
 
 
 app.use(errorMiddleware)
 
-server.listen(PORT, () => {
-    console.log(`Server is running on PORT ${PORT}`);
-})
+async function name(){
+    await mongoConnect(MONGO_URL);
+    
+    server.listen(PORT, () => {
+        console.log(`Server is running on PORT ${PORT}`);
+    })    
+}
+
+name()
+
 
 export {
     envMode
