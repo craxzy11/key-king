@@ -54,7 +54,7 @@ const recordStats = async (req, res, next) => {
             }
             else{
                 try {
-                    const result = await DailyStats.deleteOne({ userId: userId });
+                    const result = await DailyStats.deleteOne({ userId: id });
                     const newDailyStats=new DailyStats({
                         userId:id,
                         date:new Date(),
