@@ -1,11 +1,14 @@
 import mongoose from 'mongoose';
 const { Schema } = mongoose;
 
-const UserStatisticsSchema = new Schema({
+const DailyStatisticsSchema = new Schema({
   userId: {
     type: Schema.Types.ObjectId,
     ref: 'User',  
     required: true
+  },
+  date: {
+    type: Date
   },
   gameStats:[{
     mode:{
@@ -14,7 +17,7 @@ const UserStatisticsSchema = new Schema({
     },
     wpm: {
         type: Number,
-        default: []
+        default: 0
     },
     accuracy: {
         type: Number,
@@ -23,25 +26,28 @@ const UserStatisticsSchema = new Schema({
   }],
   mistypedLetters: {
     type: [Number],
-    default:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+    default:[
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+      ]      
   },
 
   totalTimePlayed: {
     type: Number,
     default: 0
   },
-  totalGamesPlayed:[{
-    mode:{
-        type:String,
-        default:"Mode of the game"
-    },
-    games:{
-        type:Number,
-        default:0
-    }
-  }]
+  totalGamesPlayed:{
+    type:Number,
+    default:0
+  }
 }, { timestamps: true });
 
-const UserStats = mongoose.model('UserStats', UserStatisticsSchema);
+const DailyStats = mongoose.model('DailyStats', DailyStatisticsSchema);
 
-export default UserStats;
+export default DailyStats;

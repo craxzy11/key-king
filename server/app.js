@@ -6,7 +6,7 @@ import { mongoConnect } from "./utils/config.js";
 import { Server } from "socket.io";
 import { createServer } from "http";
 import { errorMiddleware } from "./middleware/error.js";
-import { AUTH_ROUTES } from "./routes/index.js";
+import { AUTH_ROUTES , STATS_ROUTES } from "./routes/index.js";
 
 dotenv.config({
     path: "./.env",
@@ -25,6 +25,7 @@ app.use(cookieParser());
 app.use(express.urlencoded({extended: false}))
 
 app.use("/api/v1/auth", AUTH_ROUTES);
+app.use("/api/v1/stats", STATS_ROUTES);
 
 
 app.use(errorMiddleware)
