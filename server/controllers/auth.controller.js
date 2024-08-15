@@ -49,6 +49,7 @@ const registerUser = async (req, res, next) => {
         const userToSend = await User.findById(newUser._id).select("-password");
         return res.status(201).json({ success: true, user: userToSend });
     } catch (err) {
+        console.log(err);
         modelErrorHandler(err, next);
     }
 };
@@ -59,7 +60,7 @@ const loginUser = async (req, res, next) => {
     const field = req.body.field; //user can send either username or email 
     const password = req.body.password;
     const method = req.body.method;//which method user has chosen to login(sign in with usernamePassword=1,signInwithGoogle=2)
-
+    console.log(`${field} and ${password} and ${method}`)
     if (method == "1") {
         let user = await User.findOne({
             $or:
@@ -91,7 +92,7 @@ const loginUser = async (req, res, next) => {
             maxAge: 168 * 60 * 1000
         })
 
-        return res.status(200).send(token);
+        return res.status(200).json({ success: true, token:token });
     }
 }
 
