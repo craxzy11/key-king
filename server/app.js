@@ -20,7 +20,11 @@ const io = new Server(server)
 const PORT = process.env.PORT?process.env.PORT:5000;
 const MONGO_URL = process.env.MONGO_URL;
 const envMode = process.env.NODE_ENV;
-app.use(cors());
+app.use(cors({
+    origin:["http://localhost:3000"],
+    methods:['POST','GET','HEAD','PUT','DELETE'],
+    credentials: true
+}))
 
 app.use(express.json());
 app.use(cookieParser());

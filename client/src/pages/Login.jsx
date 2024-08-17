@@ -8,6 +8,7 @@ import axios from 'axios';
 import { loginRoute } from "../utils/APIRoutes";
 
 const Login = () => {
+  const navigate= useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const usernamechangehandler = (event) => {
@@ -33,11 +34,12 @@ const Login = () => {
         field: username,
         password,
         method:"1"
-      })
+      },{ withCredentials: true })
       const data= response.data;
-      console.log(data);
+      console.log(response);
       if (data.success == true) {
         toast.success("Login was succesful",toastOptions);
+        navigate("/home");
       }
     }
     catch (err) {

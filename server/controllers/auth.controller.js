@@ -71,9 +71,9 @@ const loginUser = async (req, res, next) => {
         });
 
 
-        if (!user) return next(new ErrorHandler("Invalid Username or Password", 404));
+        if (!user) return next(new ErrorHandler("Invalid Username or Password", 401));
 
-        if (user.password !== password) return next(new ErrorHandler("Invalid Username or Password", 404));
+        if (user.password !== password) return next(new ErrorHandler("Invalid Username or Password", 401));
 
         const token = jwt.sign({
             id: user._id,
@@ -91,8 +91,7 @@ const loginUser = async (req, res, next) => {
             secure: true,
             maxAge: 168 * 60 * 1000
         })
-
-        return res.status(200).json({ success: true, token:token });
+        return res.status(200).json({ success: true });
     }
 }
 
