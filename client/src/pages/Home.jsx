@@ -6,7 +6,7 @@ const Home = () => {
     return (
         <div>
             <Header></Header>
-            <PlayZone></PlayZone>
+            <PlayZone timeMode={5000}></PlayZone>
         </div>
     );
 
