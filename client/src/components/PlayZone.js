@@ -1,18 +1,22 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import Modal from "./Modal";
+import axios from "axios";
+import { textRoute } from "../utils/APIRoutes";
 
 const TypingTest = (props) => {
     const [inputValue, setInputValue] = useState("");
     // const [startTime, setStartTime] = useState(null);
-    const [misTyped, setMistyped] = useState(false);
-    const [misSpelled, setMisSpelled] = useState(0);
-    const [timeLeft, setTimeLeft] = useState(0);
+    const [misTyped, setMistyped] = useState(false); //to mark red the letter
+    const [misSpelled, setMisSpelled] = useState(0); //count the number of misspelled
     const [startTime, setStartTime] = useState(null);
     const [showModal, setShowModal] = useState(false);
     const [elapsedTime, setElapsedTime] = useState(0);
     const [timeOut, setTimeout] = useState(false);
+    const [loader, setLoader] = useState(true);
+    const [accuracy, setAccuracy] = useState(0);
+    const [misspelledLetters, setMisspelledLetters] = useState(new Array(26).fill(0));
     const [wpm, setWpm] = useState(0);
-    const textToType = "This is a sample paragraph for typing test.";
+    const [textToType, setTextToType] = useState("This is a sample paragraph for typing test.");
     const inputRef = useRef(null);
 
     // Focus the hidden input when the component mounts
@@ -21,32 +25,72 @@ const TypingTest = (props) => {
     }, []);
 
     // Handle input change
-    
+
     useEffect(() => {
-        console.log(inputValue)
-        const typedWords = inputValue.split(' ');
-        console.log(typedWords);
-        const time = props.timeMode / 60000;
-        console.log(time)
-        setWpm(Math.ceil(typedWords.length / time));
-        console.log(wpm);
-        if(timeOut)
-        setShowModal(true);
-    },[timeOut]);
-    
+        if (timeOut) {
+            console.log(inputValue)
+            const typedWords = inputValue.split(' ');
+            console.log(typedWords);
+            const time = props.timeMode / 60000;
+            console.log(time)
+            setWpm(Math.ceil(typedWords.length / time));
+            if (misSpelled == 0)
+                setAccuracy(100)
+            else
+                setAccuracy(Math.ceil((inputValue.length / (inputValue.length + misSpelled) * 100)));
+            console.log(misspelledLetters);
+            setShowModal(true);
+        }
+    }, [timeOut]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await axios.get(`${textRoute}?timeMode=${props.timeMode}&theme=story`);
+                console.log(response.data.texts);
+                setTextToType(response.data.texts)
+                setLoader(false)
+            } catch (err) {
+                setTextToType("het how are you are you doing fine nice to meet you there this si si a asddfaj asdfj asfas f sfdjaskdfjkasjfa dfas dfas df sd fa faskdfaufoeirlasj asf asdf asdfkjalkclcnvlfjoui as");
+                console.log(err);
+            }
+        };
+        fetchData();
+
+    }, [props.timeMode]);
+
 
     useEffect(() => {
         if (startTime) {
             const interval = setInterval(() => {
-                if (Date.now()-startTime >= (props.timeMode )) {
+                if (Date.now() - startTime >= (props.timeMode)) {
                     clearInterval(interval); // Clear the interval
                     setTimeout(true); // Show modal
                 }
-                setElapsedTime(elapsedTime=>elapsedTime+1);
-                
+                setElapsedTime(elapsedTime => elapsedTime + 1);
+
             }, 1000);
         }
     }, [startTime])
+
+    const onCloseModal = async (method) => {
+        if (method == 0) {
+            setInputValue("");
+            inputRef.current.focus();
+            setMistyped(false); //to mark red the letter
+            setMisSpelled(0); //count the number of misspelled
+            setStartTime(null);
+            setShowModal(false);
+            setElapsedTime(0);
+            setTimeout(false);
+            setAccuracy(0);
+            setMisspelledLetters(new Array(26).fill(0));
+            setWpm(0);
+        }
+        if (method == 1) {
+            window.location.reload();
+        }
+    }
 
     const handleInputChange = async (e) => {
         const value = e.target.value;
@@ -57,6 +101,10 @@ const TypingTest = (props) => {
         else {
             setMistyped(true);
             setMisSpelled(misSpelled + 1);
+            let misspelledLetter = misspelledLetters;
+            console.log(textToType.charCodeAt(value.length - 1) - 97)
+            misspelledLetter[textToType.charCodeAt(value.length - 1) - 97] = misspelledLetter[textToType.charCodeAt(value.length - 1) - 97] + 1;
+            setMisspelledLetters(misspelledLetter);
         }
 
         if (!startTime) {
@@ -72,9 +120,9 @@ const TypingTest = (props) => {
             onClick={() => inputRef.current.focus()} // Focus input on click
         >
             <h2 className="text-xl font-bold mb-4">Typing Speed Test</h2>
-            {elapsedTime < props.timeMode/1000 && <h2>{(props.timeMode/1000)-elapsedTime}</h2>}
+            {elapsedTime < props.timeMode / 1000 && <h2>{(props.timeMode / 1000) - elapsedTime}</h2>}
             <p className="font-mono">
-                {textToType.split("").map((letter, index) => (
+                {!loader && textToType.split("").map((letter, index) => (
                     <span
                         key={index}
                         className={`${index === inputValue.length
@@ -115,8 +163,8 @@ const TypingTest = (props) => {
             animation: blink 1s infinite;
           }
         `}
-        </style>
-            {showModal && <Modal wpm={wpm}></Modal>}
+            </style>
+            {showModal && <Modal wpm={wpm} accuracy={accuracy} misspelledLetters={misspelledLetters} onCloseModal={onCloseModal}></Modal>}
         </div>
     );
 };
